@@ -87,6 +87,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findByProjectCode(projectCode);
         project.setProjectStatus(Status.COMPLETE);
         projectRepository.save(project);
+        taskService.completeByProject(projectMapper.convertToDto(project));
+
     }
 
     @Override
@@ -102,5 +104,11 @@ public class ProjectServiceImpl implements ProjectService {
             obj.setCompleteTaskCounts(taskService.totalCompletedTask(project.getProjectCode()));
             return obj;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDTO> readAllByAssignedManager(User assignedManager) {
+        List<Project> list = projectRepository.findAllByAssignedManager(assignedManager);
+        return list.stream().map(projectMapper::convertToDto).collect(Collectors.toList());
     }
 }
