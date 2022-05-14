@@ -74,7 +74,11 @@ public class ProjectServiceImpl implements ProjectService {
         // change the flag and keep in the db
         Project project = projectRepository.findByProjectCode(code);
         project.setIsDeleted(true);
+        project.setProjectCode(project.getProjectCode()+ "-" + project.getId());
         projectRepository.save(project);
+
+        // delete tasks
+        taskService.deleteByProject(projectMapper.convertToDto(project));
 
     }
 
